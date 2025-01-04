@@ -11,7 +11,7 @@ const path = "./input.csv"
 
 type Storage interface {
 	Add(string) int
-	Delete()
+	Delete(int) error
 	List() []models.TODO
 	Complete()
 }
