@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"os"
+	"todo-list/internal/models"
 )
 
 const path = "./input.csv"
@@ -11,7 +12,7 @@ const path = "./input.csv"
 type Storage interface {
 	Add(string) int
 	Delete()
-	List()
+	List() []models.TODO
 	Complete()
 }
 
@@ -19,9 +20,15 @@ type storage struct {
 	path string
 }
 
-func (s *storage) getMaxID() int {
-	// TODO генерировать инкремент ID
-	return 0
+func (s *storage) getMaxID() (maxID int) {
+	todos := s.List()
+
+	for _, todo := range todos {
+		if todo.ID > maxID {
+			maxID = todo.ID
+		}
+	}
+	return maxID
 }
 
 var s *storage
