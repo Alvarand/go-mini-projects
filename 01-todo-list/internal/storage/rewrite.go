@@ -2,6 +2,7 @@ package storage
 
 import (
 	"encoding/csv"
+	"fmt"
 	"log"
 	"os"
 	"todo-list/internal/models"
@@ -10,7 +11,7 @@ import (
 func (s *storage) rewrite(todos []models.TODO) error {
 	fi, err := os.OpenFile(s.path, os.O_TRUNC|os.O_WRONLY, os.ModeAppend)
 	if err != nil {
-		log.Fatalf(models.ErrorFailedOpenFile.Error(), err)
+		return fmt.Errorf(models.ErrorFailedOpenFile.Error(), err)
 	}
 
 	defer func() {
@@ -25,7 +26,7 @@ func (s *storage) rewrite(todos []models.TODO) error {
 	for _, todo := range todos {
 		err = csvWriter.Write(todo.GetValues())
 		if err != nil {
-			log.Fatalf(models.ErrorFailedWriteFile.Error(), err)
+			return fmt.Errorf(models.ErrorFailedWriteFile.Error(), err)
 		}
 	}
 
