@@ -1,6 +1,8 @@
-# Todo App - консольное приложение
+# Todo App - консольное приложение для создания todo list'а
 
 Данные хранятся в csv формате
+
+**Для начала необходимо создать исполняемый файл командой**: `go build -o todoapp [путь к cmd/main.go]`
 
 ## Возможности
 
@@ -14,13 +16,13 @@
 ### Добавить задачу
 
 ```text
-todoapp add <desciption>
+./todoapp add <desciption>
 ```
 
 Пример:
 
 ```text
-todoapp add "Создать todo app"
+./todoapp add "Создать todo app"
 ```
 
 ---
@@ -28,13 +30,13 @@ todoapp add "Создать todo app"
 ### Удалить задачу
 
 ```text
-todoapp delete <taskID>
+./todoapp delete <taskID>
 ```
 
 Пример:
 
 ```text
-todoapp delete 2
+./todoapp delete 2
 ```
 
 ---
@@ -42,7 +44,7 @@ todoapp delete 2
 ### Вывести список задач
 
 ```text
-todoapp list
+./todoapp list
 ```
 
 ---
@@ -50,11 +52,11 @@ todoapp list
 ### Завершить задачу
 
 ```text
-todoapp complete <taskID>
+./todoapp complete <taskID>
 ```
 
 Пример:
 
 ```text
-todoapp complete 3
+./todoapp complete 3
 ```
