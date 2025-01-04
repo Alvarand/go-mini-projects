@@ -13,7 +13,7 @@ type Storage interface {
 	Add(string) int
 	Delete(int) error
 	List() []models.TODO
-	Complete()
+	Complete(int) error
 }
 
 type storage struct {
