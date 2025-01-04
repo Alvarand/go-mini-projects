@@ -1,5 +1,5 @@
 package storage
 
-func (s *storage) Add() {
-
+func (s *storage) Add(_ string) int {
+	return 0
 }

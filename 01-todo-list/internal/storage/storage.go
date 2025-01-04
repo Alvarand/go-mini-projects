@@ -1,7 +1,7 @@
 package storage
 
 type Storage interface {
-	Add()
+	Add(string) int
 	Delete()
 	List()
 	Complete()
