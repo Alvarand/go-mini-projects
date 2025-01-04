@@ -10,12 +10,12 @@ import (
 func (s *storage) rewrite(todos []models.TODO) error {
 	fi, err := os.OpenFile(s.path, os.O_TRUNC|os.O_WRONLY, os.ModeAppend)
 	if err != nil {
-		log.Fatalf("failed to open csv file: %s", err)
+		log.Fatalf(models.ErrorFailedOpenFile.Error(), err)
 	}
 
 	defer func() {
 		if err := fi.Close(); err != nil {
-			log.Fatalf("failed to close csv file: %s", err)
+			log.Fatalf(models.ErrorFailedCloseFile.Error(), err)
 		}
 	}()
 
@@ -25,7 +25,7 @@ func (s *storage) rewrite(todos []models.TODO) error {
 	for _, todo := range todos {
 		err = csvWriter.Write(todo.GetValues())
 		if err != nil {
-			log.Fatalf("failed to write in file: %s", err)
+			log.Fatalf(models.ErrorFailedWriteFile.Error(), err)
 		}
 	}
 

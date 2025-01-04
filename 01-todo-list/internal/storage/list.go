@@ -15,19 +15,19 @@ func (s *storage) List() []models.TODO {
 
 	fo, err := os.OpenFile(s.path, os.O_RDONLY, os.ModeAppend)
 	if err != nil {
-		log.Fatalf("failed to open csv file: %s", err)
+		log.Fatalf(models.ErrorFailedOpenFile.Error(), err)
 	}
 
 	defer func() {
 		if err := fo.Close(); err != nil {
-			log.Fatalf("failed to close csv file: %s", err)
+			log.Fatalf(models.ErrorFailedCloseFile.Error(), err)
 		}
 	}()
 
 	csvReader := csv.NewReader(fo)
 	records, err := csvReader.ReadAll()
 	if err != nil {
-		log.Fatalf("failed to read csv file: %s", err)
+		log.Fatalf(models.ErrorFailedReadFile.Error(), err)
 	}
 
 	for _, record := range records {
@@ -56,7 +56,7 @@ func parseTODO(record []string) models.TODO {
 func stringToInt(s string) int {
 	parsedInt, err := strconv.Atoi(s)
 	if err != nil {
-		log.Fatalf("failed to convert string to int: %s", err)
+		log.Fatalf(models.ErrorConvertStringToInt.Error(), err)
 	}
 	return parsedInt
 }
@@ -64,7 +64,7 @@ func stringToInt(s string) int {
 func stringToBool(s string) bool {
 	parsedBool, err := strconv.ParseBool(s)
 	if err != nil {
-		log.Fatalf("failed to convert string to bool: %s", err)
+		log.Fatalf(models.ErrorConvertStringToBool.Error(), err)
 	}
 	return parsedBool
 }
@@ -72,7 +72,7 @@ func stringToBool(s string) bool {
 func stringToTime(s string) time.Time {
 	parsedTime, err := time.Parse(models.TimeLayout, s)
 	if err != nil {
-		log.Fatalf("failed to convert string to time: %s", err)
+		log.Fatalf(models.ErrorConvertStringToTime.Error(), err)
 	}
 
 	return parsedTime

@@ -4,6 +4,9 @@ import (
 	"errors"
 )
 
+var errorTaskIsAlreadyCompleted = errors.New("task is already completed")
+var errorTaskIsNotExists = errors.New("taskID is not exists")
+
 func (s *storage) Complete(taskID int) error {
 	isExistTaskID := false
 
@@ -13,7 +16,7 @@ func (s *storage) Complete(taskID int) error {
 			continue
 		}
 		if todo.IsCompleted {
-			return errors.New("task is already completed")
+			return errorTaskIsAlreadyCompleted
 		}
 		todos[i].IsCompleted = true
 		isExistTaskID = true
@@ -21,7 +24,7 @@ func (s *storage) Complete(taskID int) error {
 	}
 
 	if !isExistTaskID {
-		return errors.New("taskID is not exists")
+		return errorTaskIsNotExists
 	}
 
 	return s.rewrite(todos)

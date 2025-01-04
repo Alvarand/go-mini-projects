@@ -1,9 +1,5 @@
 package storage
 
-import (
-	"errors"
-)
-
 func (s *storage) Delete(taskID int) error {
 	isExistTaskID := false
 
@@ -18,7 +14,7 @@ func (s *storage) Delete(taskID int) error {
 	}
 
 	if !isExistTaskID {
-		return errors.New("taskID is not exists")
+		return errorTaskIsNotExists
 	}
 
 	return s.rewrite(todos)

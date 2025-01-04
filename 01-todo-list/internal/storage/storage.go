@@ -41,11 +41,11 @@ func init() {
 	if _, err := os.Stat(s.path); errors.Is(err, os.ErrNotExist) {
 		fo, err := os.Create(s.path)
 		if err != nil {
-			log.Fatalf("failed to create file: %s", err)
+			log.Fatalf(models.ErrorFailedCreateFile.Error(), err)
 		}
 		defer func() {
 			if err := fo.Close(); err != nil {
-				log.Fatalf("failed to close file: %s", err)
+				log.Fatalf(models.ErrorFailedCloseFile.Error(), err)
 			}
 		}()
 	}
