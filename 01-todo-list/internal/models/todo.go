@@ -14,5 +14,5 @@ type TODO struct {
 }
 
 func (t TODO) GetValues() []string {
-	return []string{fmt.Sprint(t.ID), fmt.Sprint(t.IsCompleted), fmt.Sprint(t.IsDeleted), fmt.Sprint(t.Description), fmt.Sprint(t.CreatedAt)}
+	return []string{fmt.Sprint(t.ID), fmt.Sprint(t.IsCompleted), fmt.Sprint(t.IsDeleted), fmt.Sprint(t.Description), t.CreatedAt.Format(TimeLayout)}
 }
