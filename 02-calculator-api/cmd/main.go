@@ -17,11 +17,11 @@ func main() {
 	hand := handler.New()
 
 	{
-		router.HandleFunc("/add", hand.Add)
-		router.HandleFunc("/subtract", hand.Subtract)
-		router.HandleFunc("/multiply", hand.Multiply)
-		router.HandleFunc("/divide", hand.Divide)
-		router.HandleFunc("/sum", hand.Sum)
+		router.HandleFunc("POST /add", hand.Add)
+		router.HandleFunc("POST /subtract", hand.Subtract)
+		router.HandleFunc("POST /multiply", hand.Multiply)
+		router.HandleFunc("POST /divide", hand.Divide)
+		router.HandleFunc("POST /sum", hand.Sum)
 	}
 
 	if err := http.ListenAndServe("localhost:3000", router); err != nil {
