@@ -5,6 +5,6 @@ import (
 	"net/http"
 )
 
-func Divide(w http.ResponseWriter, r *http.Request) {
+func (h handler) Divide(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "response for divide\n")
 }

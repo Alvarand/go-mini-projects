@@ -14,12 +14,14 @@ func main() {
 
 	router := http.NewServeMux()
 
+	hand := handler.New()
+
 	{
-		router.HandleFunc("/add", handler.Add)
-		router.HandleFunc("/subtract", handler.Subtract)
-		router.HandleFunc("/multiply", handler.Multiply)
-		router.HandleFunc("/divide", handler.Divide)
-		router.HandleFunc("/sum", handler.Sum)
+		router.HandleFunc("/add", hand.Add)
+		router.HandleFunc("/subtract", hand.Subtract)
+		router.HandleFunc("/multiply", hand.Multiply)
+		router.HandleFunc("/divide", hand.Divide)
+		router.HandleFunc("/sum", hand.Sum)
 	}
 
 	if err := http.ListenAndServe("localhost:3000", router); err != nil {

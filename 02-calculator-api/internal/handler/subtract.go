@@ -5,6 +5,6 @@ import (
 	"net/http"
 )
 
-func Subtract(w http.ResponseWriter, r *http.Request) {
+func (h handler) Subtract(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "response for subtract\n")
 }

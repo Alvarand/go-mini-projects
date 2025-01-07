@@ -5,6 +5,6 @@ import (
 	"net/http"
 )
 
-func Multiply(w http.ResponseWriter, r *http.Request) {
+func (h handler) Multiply(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "response for multiply\n")
 }
