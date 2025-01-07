@@ -7,25 +7,29 @@ import (
 	"net/http"
 )
 
-var errorBadValues = errors.New("one of numbers is invalid")
+var errorMissingValues = errors.New("one parameter is missing")
 
-type addRequest struct {
+type baseRequest struct {
 	Number1 *int `json:"number1"`
 	Number2 *int `json:"number2"`
 }
 
-func (a addRequest) checkValues() error {
-	if a.Number1 == nil || a.Number2 == nil {
-		return errorBadValues
+func (br baseRequest) checkValues() error {
+	if br.Number1 == nil || br.Number2 == nil {
+		return errorMissingValues
 	}
 	return nil
 }
 
-func (a addRequest) sum() int {
-	return *a.Number1 + *a.Number2
+type addRequest struct {
+	baseRequest
 }
 
-type addResponse struct {
+func (ar addRequest) sum() int {
+	return *ar.Number1 + *ar.Number2
+}
+
+type baseResponse struct {
 	Result int `json:"result"`
 }
 
@@ -34,7 +38,7 @@ func (h handler) Add(w http.ResponseWriter, r *http.Request) {
 
 	var requestBody addRequest
 	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
-		http.Error(w, fmt.Sprintf("failed to decode add: %s", err), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("failed to decode request: %s", err), http.StatusBadRequest)
 		return
 	}
 
@@ -44,7 +48,7 @@ func (h handler) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := addResponse{
+	response := baseResponse{
 		Result: requestBody.sum(),
 	}
 
