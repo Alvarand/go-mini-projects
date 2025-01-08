@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 )
 
@@ -34,12 +35,15 @@ func handleRequest(w http.ResponseWriter, r *http.Request, requestBody request) 
 	defer r.Body.Close()
 
 	if err := json.NewDecoder(r.Body).Decode(requestBody); err != nil {
-		http.Error(w, fmt.Sprintf("failed to decode request: %s", err), http.StatusBadRequest)
+		message := fmt.Sprintf("failed to decode request: %s", err)
+		slog.Warn(message)
+		http.Error(w, message, http.StatusBadRequest)
 		return
 	}
 
 	// check input values
 	if err := requestBody.checkValues(); err != nil {
+		slog.Warn(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -52,6 +56,8 @@ func handleRequest(w http.ResponseWriter, r *http.Request, requestBody request) 
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		http.Error(w, fmt.Sprintf("failed to encode response: %s", err), http.StatusInternalServerError)
+		message := fmt.Sprintf("failed to encode response: %s", err)
+		slog.Error(message)
+		http.Error(w, message, http.StatusInternalServerError)
 	}
 }
