@@ -4,9 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
-	"web-scraper/internal/parser"
 	"web-scraper/internal/scraper"
-	"web-scraper/internal/service"
 )
 
 var baseURL = ""
@@ -23,12 +21,9 @@ func main() {
 		return
 	}
 
-	parser := parser.New()
-	scraper := scraper.New()
-
-	service := service.New(parser, scraper)
-	if err := service.SetURL(baseURL); err != nil {
-		slog.Error(fmt.Sprintf("failed to set URL: %s", err))
+	service, err := scraper.New(baseURL)
+	if err != nil {
+		slog.Error(fmt.Sprintf("failed to create service: %s", err))
 		return
 	}
 

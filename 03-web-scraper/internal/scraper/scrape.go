@@ -1,0 +1,79 @@
+package scraper
+
+import (
+	"fmt"
+	"log/slog"
+	"net/http"
+	"slices"
+
+	"golang.org/x/net/html"
+)
+
+func (s *Scraper) scrape(previousURL string, url string) {
+
+	if _, isParsed := s.parsedURL[url]; isParsed {
+		if _, isExists := s.badPages[url]; isExists && !slices.Contains(s.pagesWithBadLinks[previousURL], url) {
+			s.pagesWithBadLinks[previousURL] = append(s.pagesWithBadLinks[previousURL], url)
+		}
+		slog.Info(fmt.Sprintf("Page %s is already checked. Skipping", url))
+		return
+	}
+
+	s.parsedURL[url] = nil
+
+	slog.Info(fmt.Sprintf("Checking %s for dead links", url))
+	resp, err := http.Get(url)
+	if err != nil {
+		slog.Error(err.Error())
+		return
+	}
+	if resp.StatusCode >= 400 {
+		s.badPages[url] = nil
+		if !slices.Contains(s.pagesWithBadLinks[previousURL], url) {
+			s.pagesWithBadLinks[previousURL] = append(s.pagesWithBadLinks[previousURL], url)
+		}
+		return
+	}
+	host := resp.Request.URL.Host
+	schema := resp.Request.URL.Scheme
+
+	// if host is another -> end
+	isSameDomain := host != s.baseHost
+	if isSameDomain {
+		slog.Warn("Page is not in the same domain. Skipping")
+		return
+	}
+
+	parsedInfo, err := html.Parse(resp.Body)
+	if err != nil {
+		slog.Error(err.Error())
+	}
+	if err := resp.Body.Close(); err != nil {
+		slog.Error(err.Error())
+	}
+
+	links := getAllLinks([]string{}, parsedInfo)
+	for _, link := range links {
+		// link's path starts with /
+		if link[0] == '/' {
+			link = fmt.Sprintf("%s://%s%s", schema, host, link)
+		}
+		s.scrape(url, link)
+	}
+}
+
+func getAllLinks(links []string, node *html.Node) []string {
+	if node.Type == html.ElementNode && node.Data == "a" {
+		for _, attr := range node.Attr {
+			if attr.Key == "href" {
+				links = append(links, attr.Val)
+			}
+		}
+	}
+
+	for c := node.FirstChild; c != nil; c = c.NextSibling {
+		links = getAllLinks(links, c)
+	}
+
+	return links
+}
