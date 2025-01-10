@@ -5,21 +5,31 @@ import (
 	"log/slog"
 	"net/http"
 	"slices"
+	"time"
 
 	"golang.org/x/net/html"
 )
 
 func (s *Scraper) scrape(previousURL string, url string) {
+	s.wg.Add(1)
+	defer s.wg.Done()
 
+	s.mxParsedURL.Lock()
 	if _, isParsed := s.parsedURL[url]; isParsed {
+		s.mxParsedURL.Unlock()
+		s.mxBadPages.Lock()
+		s.mxPagesWithBadLinks.Lock()
 		if _, isExists := s.badPages[url]; isExists && !slices.Contains(s.pagesWithBadLinks[previousURL], url) {
 			s.pagesWithBadLinks[previousURL] = append(s.pagesWithBadLinks[previousURL], url)
 		}
+		s.mxBadPages.Unlock()
+		s.mxPagesWithBadLinks.Unlock()
 		slog.Info(fmt.Sprintf("Page %s is already checked. Skipping", url))
 		return
 	}
 
 	s.parsedURL[url] = nil
+	s.mxParsedURL.Unlock()
 
 	slog.Info(fmt.Sprintf("Checking %s for dead links", url))
 	resp, err := http.Get(url)
@@ -28,10 +38,14 @@ func (s *Scraper) scrape(previousURL string, url string) {
 		return
 	}
 	if resp.StatusCode >= 400 {
+		s.mxBadPages.Lock()
 		s.badPages[url] = nil
+		s.mxBadPages.Unlock()
+		s.mxPagesWithBadLinks.Lock()
 		if !slices.Contains(s.pagesWithBadLinks[previousURL], url) {
 			s.pagesWithBadLinks[previousURL] = append(s.pagesWithBadLinks[previousURL], url)
 		}
+		s.mxPagesWithBadLinks.Unlock()
 		return
 	}
 	host := resp.Request.URL.Host
@@ -58,8 +72,9 @@ func (s *Scraper) scrape(previousURL string, url string) {
 		if link[0] == '/' {
 			link = fmt.Sprintf("%s://%s%s", schema, host, link)
 		}
-		s.scrape(url, link)
+		go s.scrape(url, link)
 	}
+	time.Sleep(1 * time.Millisecond)
 }
 
 func getAllLinks(links []string, node *html.Node) []string {
