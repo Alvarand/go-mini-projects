@@ -68,6 +68,9 @@ func (s *Scraper) scrape(previousURL string, url string) {
 
 	links := getAllLinks([]string{}, parsedInfo)
 	for _, link := range links {
+		if len(link) == 0 {
+			continue
+		}
 		// link's path starts with /
 		if link[0] == '/' {
 			link = fmt.Sprintf("%s://%s%s", schema, host, link)
@@ -78,6 +81,9 @@ func (s *Scraper) scrape(previousURL string, url string) {
 }
 
 func getAllLinks(links []string, node *html.Node) []string {
+	if node == nil {
+		return links
+	}
 	if node.Type == html.ElementNode && node.Data == "a" {
 		for _, attr := range node.Attr {
 			if attr.Key == "href" {
