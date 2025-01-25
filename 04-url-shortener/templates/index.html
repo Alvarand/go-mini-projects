@@ -1,11 +1,76 @@
 <!DOCTYPE html>
 <html lang="en" class="h-screen" style="color-scheme: dark; text-align: center; font-family: Poppins, sans;">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Example Template</title>
-  </head>
-  <body>
-    <h1>Hello. Your url is '{{ .URL }}'</h1>
-  </body>
+    <title>URL Shortener</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #121212;
+        color: white;
+      }
+
+      .container {
+        text-align: center;
+        background-color: #1f1f1f;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 400px;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+        color: #f1f1f1;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
+
+      input[type="url"] {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        background-color: #333;
+        color: white;
+        box-sizing: border-box;
+      }
+
+      button {
+        padding: 12px 20px;
+        border: none;
+        background-color: #6200ea;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 4px;
+        width: 100%;
+      }
+
+      button:hover {
+        background-color: #3700b3;
+      }
+    </style>
+</head>
+
+<body>
+  <div class="container">
+      <h1>URL Shortener</h1>
+      <form action="/storten" method="POST">
+          <input type="url" id="url" name="url" placeholder="Enter link here" required>
+          <button type="submit">Shorten</button>
+      </form>
+  </div>
+</body>
 </html>
