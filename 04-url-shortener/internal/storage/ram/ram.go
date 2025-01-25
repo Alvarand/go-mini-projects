@@ -5,6 +5,8 @@ import (
 	"sync"
 )
 
+const countOfAlphabet = 52
+
 var errorUnexistsShortURL = errors.New("url does not exist")
 
 type LocalDatabase struct {
@@ -24,7 +26,7 @@ func New() *LocalDatabase {
 
 func (ld *LocalDatabase) SaveURL(url string) (string, error) {
 	ld.mx.Lock()
-	shortURL := "" // TODO generate short URL
+	shortURL := ld.generateURL()
 	ld.storage[shortURL] = url
 	ld.mx.Unlock()
 
@@ -41,4 +43,32 @@ func (ld *LocalDatabase) GetURL(shortURL string) (string, error) {
 	}
 
 	return url, nil
+}
+
+func (ld *LocalDatabase) generateURL() string {
+	num := ld.maxID
+	reverseGeneratedURL := ""
+
+	for num > 0 {
+		alphabetIndex := num % countOfAlphabet
+		if alphabetIndex == 0 {
+			alphabetIndex = countOfAlphabet
+			num = num / (countOfAlphabet + 1)
+		} else {
+			num /= countOfAlphabet
+		}
+
+		if alphabetIndex > countOfAlphabet/2 {
+			reverseGeneratedURL += string(rune('A' - 1 + alphabetIndex - (countOfAlphabet / 2)))
+		} else {
+			reverseGeneratedURL += string(rune('a' - 1 + alphabetIndex))
+		}
+	}
+
+	shortURL := ""
+	for i := len(reverseGeneratedURL) - 1; 0 <= i; i-- {
+		shortURL += string(reverseGeneratedURL[i])
+	}
+	ld.maxID++
+	return shortURL
 }
