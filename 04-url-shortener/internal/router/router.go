@@ -3,6 +3,8 @@ package router
 import "html/template"
 
 type Storage interface {
+	SaveURL(string) (string, error)
+	GetURL(string) (string, error)
 }
 
 type Router struct {
