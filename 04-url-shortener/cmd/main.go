@@ -3,23 +3,33 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log/slog"
 	"net/http"
+	"url-shortener/internal/router"
+	"url-shortener/internal/storage/ram"
 )
 
+const port = "8080"
+
 func main() {
+	storage := ram.New()
+	router := router.New(storage)
 
-	router := http.NewServeMux()
+	mux := http.NewServeMux()
 
-	srv := http.Server{
-		Addr:    ":8080",
-		Handler: router,
+	{
+		mux.HandleFunc("GET /", router.BaseURL)
+		mux.HandleFunc("GET /{url}", router.Redirect)
 	}
 
-	slog.Info("Starting website at localhost:8080")
+	server := http.Server{
+		Addr:    fmt.Sprintf(":%s", port),
+		Handler: mux,
+	}
 
-	err := srv.ListenAndServe()
+	fmt.Printf("Starting website at localhost:%s\n", port)
+
+	err := server.ListenAndServe()
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
-		slog.Error(fmt.Sprint("An error occured:", err))
+		fmt.Println("An error occured:", err)
 	}
 }
