@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -16,6 +17,6 @@ func (r Router) BaseURLPost(w http.ResponseWriter, req *http.Request) {
 	url := req.FormValue("url")
 	shortURL, _ := r.storage.SaveURL(url)
 	r.templator.ExecuteTemplate(w, "shorten.html", PageData{
-		URL: shortURL,
+		URL: fmt.Sprintf("%s/%s", req.Host, shortURL),
 	})
 }
