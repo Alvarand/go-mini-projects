@@ -16,5 +16,5 @@ func (r Router) Redirect(w http.ResponseWriter, req *http.Request) {
 		r.templator.ExecuteTemplate(w, "not_found.html", nil)
 		return
 	}
-	w.Write([]byte(url))
+	http.Redirect(w, req, url, http.StatusMovedPermanently)
 }
