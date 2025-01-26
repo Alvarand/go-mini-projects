@@ -1,13 +1,20 @@
 package router
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
 
-type PageData struct {
-	URL string
-}
+	"golang.org/x/exp/slog"
+)
 
 func (r Router) Redirect(w http.ResponseWriter, req *http.Request) {
-	r.templator.ExecuteTemplate(w, "index.html", PageData{
-		URL: req.PathValue("url"),
-	})
+	shortURL := req.PathValue("url")
+	url, err := r.storage.GetURL(shortURL)
+	if err != nil {
+		slog.Warn(fmt.Sprintf("failed to get shortURL '%s': %s", shortURL, err))
+		w.WriteHeader(http.StatusNotFound)
+		r.templator.ExecuteTemplate(w, "not_found.html", nil)
+		return
+	}
+	w.Write([]byte(url))
 }
