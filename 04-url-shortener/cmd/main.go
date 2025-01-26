@@ -17,7 +17,8 @@ func main() {
 	mux := http.NewServeMux()
 
 	{
-		mux.HandleFunc("GET /", router.BaseURL)
+		mux.HandleFunc("POST /", router.BaseURLPost)
+		mux.HandleFunc("GET /", router.BaseURLGet)
 		mux.HandleFunc("GET /{url}", router.Redirect)
 	}
 
