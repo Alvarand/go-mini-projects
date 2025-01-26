@@ -31,6 +31,11 @@
       color: #f1f1f1;
     }
 
+    a {
+      color: inherit;
+      text-decoration: inherit;
+    }
+
     label {
       display: block;
       margin-bottom: 10px;
@@ -67,9 +72,11 @@
 
 <body>
   <div class="container">
-    <h1>URL Shortener</h1>
-    <h3>{{.URL}}</h1>
-      <button>Copy</button>
+    <h1>
+      <a href="/">URL Shortener</a>
+    </h1>
+    <h3>{{.URL}}</h3>
+    <button>Copy</button>
   </div>
 </body>
 
