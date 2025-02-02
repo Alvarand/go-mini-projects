@@ -1,10 +1,13 @@
 package router
 
-import "html/template"
+import (
+	"context"
+	"html/template"
+)
 
 type Storage interface {
-	SaveURL(string) (string, error)
-	GetURL(string) (string, error)
+	SaveURL(context.Context, string) (string, error)
+	GetURL(context.Context, string) (string, error)
 }
 
 type Router struct {

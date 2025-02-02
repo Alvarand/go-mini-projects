@@ -9,7 +9,7 @@ import (
 	"url-shortener/internal/client/database/pg"
 	"url-shortener/internal/env"
 	"url-shortener/internal/router"
-	"url-shortener/internal/storage/ram"
+	"url-shortener/internal/storage/database"
 )
 
 func init() {
@@ -25,15 +25,19 @@ func main() {
 	}
 	defer pgClient.Close(ctx)
 
-	storage := ram.New()
-	router := router.New(storage)
+	db, err := database.New(ctx, &pgClient)
+	if err != nil {
+		log.Fatalf("failed to create database: %s", err)
+	}
+
+	router := router.New(db)
 
 	mux := http.NewServeMux()
 
 	{
-		mux.HandleFunc("POST /", router.BaseURLPost)
+		mux.HandleFunc("POST /", router.BaseURLPost(ctx))
 		mux.HandleFunc("GET /", router.BaseURLGet)
-		mux.HandleFunc("GET /{url}", router.Redirect)
+		mux.HandleFunc("GET /{url}", router.Redirect(ctx))
 	}
 
 	server := http.Server{
