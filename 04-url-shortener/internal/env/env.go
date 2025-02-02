@@ -20,9 +20,12 @@ func Init() {
 	enviromentData = envFile
 }
 
-func Get(key string) string {
+func Get(key string, defaultValue ...string) string {
 	result, exist := enviromentData[key]
 	if !exist {
+		if len(defaultValue) != 0 {
+			return defaultValue[0]
+		}
 		return ""
 	}
 	return result
