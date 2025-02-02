@@ -15,7 +15,11 @@ FROM short_url
 WHERE short_url = $1
 `
 
-var errorUnexistsShortURL = errors.New("url does not exist")
+var (
+	errorUnexistsShortURL = errors.New("url does not exist")
+	errorGetMaxID         = "failed to get maxID: %s"
+	errorInsertURL        = "failed to insert url '%s': %s"
+)
 
 type Database struct {
 	maxID    int
@@ -44,7 +48,7 @@ func New(ctx context.Context, dbClient IPGClient) (*Database, error) {
 func (db *Database) initMaxID(ctx context.Context) error {
 	err := db.dbClient.QueryRow(ctx, []any{&db.maxID}, sqlGetMaxID)
 	if err != nil {
-		return fmt.Errorf("failed to get maxID: %s", err)
+		return fmt.Errorf(errorGetMaxID, err)
 	}
 	db.maxID++
 	return nil
@@ -65,7 +69,7 @@ func (db *Database) SaveURL(ctx context.Context, url string) (string, error) {
 		url,
 	)
 	if err != nil {
-		return "", fmt.Errorf("failed to insert url '%s': %s", url, err)
+		return "", fmt.Errorf(errorInsertURL, url, err)
 	}
 
 	return shortURL, nil

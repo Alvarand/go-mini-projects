@@ -2,7 +2,6 @@ package pg
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"url-shortener/internal/env"
 
@@ -28,8 +27,8 @@ func (c *Client) QueryRow(ctx context.Context, dest []any, sql string, args ...a
 
 const connectInfo = "host=%s port=%s user=%s password=%s dbname=%s"
 
-var errorConnect = errors.New("failed to connect: %s")
-var errorPing = errors.New("failed to ping: %s")
+var errorConnect = "failed to connect: %s"
+var errorPing = "failed to ping: %s"
 
 func New(ctx context.Context) (Client, error) {
 	conn, err := pgx.Connect(
@@ -44,12 +43,12 @@ func New(ctx context.Context) (Client, error) {
 		),
 	)
 	if err != nil {
-		return Client{}, fmt.Errorf(errorConnect.Error(), err)
+		return Client{}, fmt.Errorf(errorConnect, err)
 	}
 
 	err = conn.Ping(ctx)
 	if err != nil {
-		return Client{}, fmt.Errorf(errorPing.Error(), err)
+		return Client{}, fmt.Errorf(errorPing, err)
 	}
 
 	return Client{conn: conn}, nil

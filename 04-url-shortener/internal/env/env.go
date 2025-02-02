@@ -1,8 +1,9 @@
 package env
 
 import (
-	"errors"
-	"log"
+	"fmt"
+	"log/slog"
+	"os"
 
 	"github.com/joho/godotenv"
 )
@@ -10,12 +11,13 @@ import (
 const envPath = ".env"
 
 var enviromentData = make(map[string]string)
-var errorFailedGetEnv = errors.New("failed to get variables from env: %s")
+var errorFailedGetEnv = "failed to get variables from env: %s"
 
 func Init() {
 	envFile, err := godotenv.Read(envPath)
 	if err != nil {
-		log.Fatalf(errorFailedGetEnv.Error(), err)
+		slog.Error(fmt.Sprintf(errorFailedGetEnv, err))
+		os.Exit(1)
 	}
 	enviromentData = envFile
 }

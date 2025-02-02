@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"url-shortener/internal/client/database/pg"
 	"url-shortener/internal/env"
@@ -21,13 +21,15 @@ func main() {
 
 	pgClient, err := pg.New(ctx)
 	if err != nil {
-		log.Fatalf("failed to create pg client: %s", err)
+		slog.Error(fmt.Sprintf("failed to create pg client: %s", err))
+		return
 	}
 	defer pgClient.Close(ctx)
 
 	db, err := database.New(ctx, &pgClient)
 	if err != nil {
-		log.Fatalf("failed to create database: %s", err)
+		slog.Error(fmt.Sprintf("failed to create database: %s", err))
+		return
 	}
 
 	router := router.New(db)
@@ -45,10 +47,11 @@ func main() {
 		Handler: mux,
 	}
 
-	fmt.Printf("Starting website at localhost:%s\n", env.Get("SERVER_PORT"))
+	slog.Info(fmt.Sprintf("Starting website at localhost:%s\n", env.Get("SERVER_PORT")))
 
 	err = server.ListenAndServe()
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
-		fmt.Println("An error occured:", err)
+		slog.Error(fmt.Sprintf("an error occured: %s", err))
+		return
 	}
 }
