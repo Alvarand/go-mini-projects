@@ -1,18 +1,29 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
+	"url-shortener/internal/client/database/pg"
 	"url-shortener/internal/env"
 	"url-shortener/internal/router"
 	"url-shortener/internal/storage/ram"
 )
 
-const port = "8080"
+func init() {
+	env.Init()
+}
 
 func main() {
-	env.Init()
+	ctx := context.Background()
+
+	pgClient, err := pg.New(ctx)
+	if err != nil {
+		log.Fatalf("failed to create pg client: %s", err)
+	}
+	defer pgClient.Close(ctx)
 
 	storage := ram.New()
 	router := router.New(storage)
@@ -32,7 +43,7 @@ func main() {
 
 	fmt.Printf("Starting website at localhost:%s\n", port)
 
-	err := server.ListenAndServe()
+	err = server.ListenAndServe()
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
 		fmt.Println("An error occured:", err)
 	}
