@@ -17,6 +17,15 @@ func (c *Client) Close(ctx context.Context) {
 	c.conn.Close(ctx)
 }
 
+func (c *Client) Exec(ctx context.Context, sql string, arguments ...any) error {
+	_, err := c.conn.Exec(ctx, sql, arguments...)
+	return err
+}
+
+func (c *Client) QueryRow(ctx context.Context, dest []any, sql string, args ...any) error {
+	return c.conn.QueryRow(ctx, sql, args...).Scan(dest...)
+}
+
 const connectInfo = "host=%s port=%s user=%s password=%s dbname=%s"
 
 var errorConnect = errors.New("failed to connect: %s")
