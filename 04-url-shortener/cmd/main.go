@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"url-shortener/internal/env"
 	"url-shortener/internal/router"
 	"url-shortener/internal/storage/ram"
 )
@@ -11,6 +12,8 @@ import (
 const port = "8080"
 
 func main() {
+	env.Init()
+
 	storage := ram.New()
 	router := router.New(storage)
 
