@@ -37,11 +37,11 @@ func main() {
 	}
 
 	server := http.Server{
-		Addr:    fmt.Sprintf(":%s", port),
+		Addr:    fmt.Sprintf(":%s", env.Get("SERVER_PORT")),
 		Handler: mux,
 	}
 
-	fmt.Printf("Starting website at localhost:%s\n", port)
+	fmt.Printf("Starting website at localhost:%s\n", env.Get("SERVER_PORT"))
 
 	err = server.ListenAndServe()
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
